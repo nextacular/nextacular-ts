@@ -1,0 +1,163 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider          = "postgresql"
+  url               = env("DATABASE_URL")
+  shadowDatabaseUrl = env("SHADOW_DATABASE_URL")
+}
+
+model Account {
+  id                 String  @id @default(cuid())
+  userId             String
+  type               String
+  provider           String
+  providerAccountId  String
+  refresh_token      String? @db.Text
+  access_token       String? @db.Text
+  expires_at         Int?
+  token_type         String?
+  scope              String?
+  id_token           String? @db.Text
+  session_state      String?
+  oauth_token_secret String?
+  oauth_token        String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@map("accounts")
+}
+
+model CustomerPayment {
+  id               String           @id @default(cuid())
+  paymentId        String           @unique
+  customerId       String           @unique
+  email            String?          @unique
+  subscriptionType SubscriptionType @default(FREE)
+  createdAt        DateTime?        @default(now())
+  deletedAt        DateTime?
+  updatedAt        DateTime?        @updatedAt
+
+  customer User @relation(fields: [customerId], references: [id])
+
+  @@map("customerPayments")
+}
+
+model Domain {
+  id          String    @id @default(cuid())
+  workspaceId String
+  addedById   String
+  name        String
+  subdomain   String?
+  verified    Boolean?  @default(true)
+  value       String?
+  createdAt   DateTime? @default(now())
+  deletedAt   DateTime?
+  updatedAt   DateTime? @updatedAt
+
+  addedBy   User      @relation(fields: [addedById], references: [id])
+  workspace Workspace @relation(fields: [workspaceId], references: [id])
+
+  @@map("domains")
+}
+
+model Member {
+  id          String    @id @default(cuid())
+  workspaceId String
+  email       String
+  inviter     String
+  invitedAt   DateTime? @default(now())
+  joinedAt    DateTime?
+  deletedAt   DateTime?
+  updatedAt   DateTime? @updatedAt
+
+  status    InvitationStatus @default(PENDING)
+  teamRole  TeamRole         @default(MEMBER)
+  member    User?            @relation(fields: [email], references: [email], name: "membership")
+  invitedBy User?            @relation(fields: [inviter], references: [email], name: "inviter")
+  workspace Workspace        @relation(fields: [workspaceId], references: [id])
+
+  @@unique([workspaceId, email])
+  @@map("members")
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("sessions")
+}
+
+model User {
+  id            String    @id @default(cuid())
+  userCode      String    @unique @default(cuid())
+  name          String?
+  email         String?   @unique
+  emailVerified DateTime?
+  image         String?
+  createdAt     DateTime? @default(now())
+  deletedAt     DateTime?
+  updatedAt     DateTime? @updatedAt
+
+  accounts         Account[]
+  sessions         Session[]
+  membership       Member[]         @relation("membership")
+  invitedMembers   Member[]         @relation("inviter")
+  createdWorkspace Workspace[]
+  customerPayment  CustomerPayment?
+  domains          Domain[]
+
+  @@unique([userCode, email])
+  @@map("users")
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+  @@map("verificationTokens")
+}
+
+model Workspace {
+  id            String    @id @default(cuid())
+  workspaceCode String    @unique @default(cuid())
+  inviteCode    String    @unique @default(cuid())
+  creatorId     String
+  name          String
+  slug          String
+  createdAt     DateTime? @default(now())
+  deletedAt     DateTime?
+  updatedAt     DateTime? @updatedAt
+
+  creator User     @relation(fields: [creatorId], references: [id], onDelete: Cascade)
+  members Member[]
+  domains Domain[]
+
+  @@unique([workspaceCode, inviteCode])
+  @@map("workspaces")
+}
+
+enum InvitationStatus {
+  ACCEPTED
+  PENDING
+  DECLINED
+}
+
+enum SubscriptionType {
+  FREE
+  STANDARD
+  PREMIUM
+}
+
+enum TeamRole {
+  MEMBER
+  OWNER
+}
