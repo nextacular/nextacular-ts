@@ -1,19 +1,19 @@
-import {createContext, ReactElement, useContext, useState } from 'react';
 import { Workspace } from '@prisma/client';
+import { createContext, ReactElement, useContext, useState } from 'react';
 
 const initialState = {
-  setWorkspace: (workspace: Workspace | null) : void => {},
-  workspace: null,
+  setWorkspace: (_workspace: Workspace): void => {},
+  workspace: null as Workspace | null,
 };
 
 const WorkspaceContext = createContext(initialState);
 
 export const useWorkspace = () => useContext(WorkspaceContext);
 
-const WorkspaceProvider = ({ children } : {children: Array<ReactElement>}) => {
-  const [workspace, setWorkspaceState] = useState(null);
+const WorkspaceProvider = ({ children }: { children: Array<ReactElement> }) => {
+  const [workspace, setWorkspaceState] = useState<Workspace | null>(null);
 
-  const setWorkspace = (workspace: Workspace | null) => {
+  const setWorkspace = (workspace: Workspace) => {
     setWorkspaceState(workspace);
   };
 

@@ -29,6 +29,12 @@
     "sourceMap": true,
     "outDir": "dist"
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    "src/pages/_sites/[site]/index.js",
+    "src/pages/_sites/[site]/index.js"
+  ],
   "exclude": ["node_modules"]
 }
