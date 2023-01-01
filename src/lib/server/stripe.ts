@@ -2,6 +2,7 @@ import initStripe from 'stripe';
 
 const stripe = new initStripe(process.env.PAYMENTS_SECRET_KEY as string, {
   apiVersion: "2020-08-27",
+  typescript: true,
 });
 
 export const createCustomer = async (email: string) =>

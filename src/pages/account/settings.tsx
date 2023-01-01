@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { DocumentDuplicateIcon } from '@heroicons/react/outline';
 import { getSession, signOut } from 'next-auth/react';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
@@ -13,8 +13,11 @@ import Modal from '@/components/Modal/index';
 import { AccountLayout } from '@/layouts/index';
 import api from '@/lib/common/api';
 import { getUser } from '@/prisma/services/user';
+import { GetServerSideProps } from 'next';
+import { Session } from 'next-auth';
+import { User } from '@prisma/client';
 
-const Settings = ({ user }) => {
+const Settings = ({ user }: { user: User }) => {
   const [email, setEmail] = useState(user.email || '');
   const [isSubmitting, setSubmittingState] = useState(false);
   const [name, setName] = useState(user.name || '');
@@ -27,7 +30,7 @@ const Settings = ({ user }) => {
 
   const copyToClipboard = () => toast.success('Copied to clipboard!');
 
-  const changeName = (event) => {
+  const changeName = (event: React.MouseEvent<HTMLElement>) => {
     event.preventDefault();
     setSubmittingState(true);
     api('/api/user/name', {
@@ -46,7 +49,7 @@ const Settings = ({ user }) => {
     });
   };
 
-  const changeEmail = (event) => {
+  const changeEmail = (event: React.MouseEvent<HTMLElement>) => {
     event.preventDefault();
     const result = confirm(
       'Are you sure you want to update your email address?'
@@ -72,7 +75,7 @@ const Settings = ({ user }) => {
     }
   };
 
-  const deactivateAccount = (event) => {
+  const deactivateAccount = (event: React.MouseEvent<HTMLElement>) => {
     event.preventDefault();
     setSubmittingState(true);
     api('/api/user', {
@@ -91,11 +94,15 @@ const Settings = ({ user }) => {
     });
   };
 
-  const handleEmailChange = (event) => setEmail(event.target.value);
+  const handleEmailChange = (event: React.ChangeEvent<HTMLInputElement>) =>
+    setEmail(event.target.value);
 
-  const handleNameChange = (event) => setName(event.target.value);
+  const handleNameChange = (event: React.ChangeEvent<HTMLInputElement>) =>
+    setName(event.target.value);
 
-  const handleVerifyEmailChange = (event) => setVerifyEmail(event.target.value);
+  const handleVerifyEmailChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => setVerifyEmail(event.target.value);
 
   const toggleModal = () => {
     setVerifyEmail('');
@@ -235,9 +242,11 @@ const Settings = ({ user }) => {
   );
 };
 
-export const getServerSideProps = async (context) => {
-  const session = await getSession(context);
-  const { email, name, userCode } = await getUser(session.user?.userId);
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  const session = (await getSession(context)) as Session;
+  const { email, name, userCode } = (await getUser(
+    session.user?.userId
+  )) as User;
   return {
     props: {
       user: {

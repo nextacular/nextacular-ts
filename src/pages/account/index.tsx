@@ -10,6 +10,7 @@ import { useInvitations, useWorkspaces } from '@/hooks/data/index';
 import { AccountLayout } from '@/layouts/index';
 import api from '@/lib/common/api';
 import { useWorkspace } from '@/providers/workspace';
+import { Workspace } from '@prisma/client';
 
 const Welcome = () => {
   const router = useRouter();
@@ -20,7 +21,7 @@ const Welcome = () => {
   const { setWorkspace } = useWorkspace();
   const [isSubmitting, setSubmittingState] = useState(false);
 
-  const accept = (memberId) => {
+  const accept = (memberId: string) => {
     setSubmittingState(true);
     api(`/api/workspace/team/accept`, {
       body: { memberId },
@@ -38,7 +39,7 @@ const Welcome = () => {
     });
   };
 
-  const decline = (memberId) => {
+  const decline = (memberId: string) => {
     setSubmittingState(true);
     api(`/api/workspace/team/decline`, {
       body: { memberId },
@@ -56,7 +57,7 @@ const Welcome = () => {
     });
   };
 
-  const navigate = (workspace) => {
+  const navigate = (workspace: Workspace) => {
     setWorkspace(workspace);
     router.replace(`/account/${workspace.slug}`);
   };
@@ -77,19 +78,21 @@ const Welcome = () => {
               <Card.Footer />
             </Card>
           ) : workspacesData?.workspaces.length > 0 ? (
-            workspacesData.workspaces.map((workspace, index) => (
-              <Card key={index}>
-                <Card.Body title={workspace.name} />
-                <Card.Footer>
-                  <button
-                    className="text-blue-600"
-                    onClick={() => navigate(workspace)}
-                  >
-                    Select workspace &rarr;
-                  </button>
-                </Card.Footer>
-              </Card>
-            ))
+            workspacesData.workspaces.map(
+              (workspace: Workspace, index: number) => (
+                <Card key={index}>
+                  <Card.Body title={workspace.name} />
+                  <Card.Footer>
+                    <button
+                      className="text-blue-600"
+                      onClick={() => navigate(workspace)}
+                    >
+                      Select workspace &rarr;
+                    </button>
+                  </Card.Footer>
+                </Card>
+              )
+            )
           ) : (
             <Card.Empty>Start creating a workspace now</Card.Empty>
           )}
@@ -109,32 +112,34 @@ const Welcome = () => {
               <Card.Footer />
             </Card>
           ) : invitationsData?.invitations.length > 0 ? (
-            invitationsData.invitations.map((invitation, index) => (
-              <Card key={index}>
-                <Card.Body
-                  title={invitation.workspace.name}
-                  subtitle={`You have been invited by ${
-                    invitation.invitedBy.name || invitation.invitedBy.email
-                  }`}
-                />
-                <Card.Footer>
-                  <Button
-                    className="text-white bg-blue-600 hover:bg-blue-500"
-                    disabled={isSubmitting}
-                    onClick={() => accept(invitation.id)}
-                  >
-                    Accept
-                  </Button>
-                  <Button
-                    className="text-red-600 border border-red-600 hover:bg-red-600 hover:text-white"
-                    disabled={isSubmitting}
-                    onClick={() => decline(invitation.id)}
-                  >
-                    Decline
-                  </Button>
-                </Card.Footer>
-              </Card>
-            ))
+            invitationsData.invitations.map(
+              (invitation: any, index: number) => (
+                <Card key={index}>
+                  <Card.Body
+                    title={invitation.workspace.name}
+                    subtitle={`You have been invited by ${
+                      invitation.invitedBy.name || invitation.invitedBy.email
+                    }`}
+                  />
+                  <Card.Footer>
+                    <Button
+                      className="text-white bg-blue-600 hover:bg-blue-500"
+                      disabled={isSubmitting}
+                      onClick={() => accept(invitation.id)}
+                    >
+                      Accept
+                    </Button>
+                    <Button
+                      className="text-red-600 border border-red-600 hover:bg-red-600 hover:text-white"
+                      disabled={isSubmitting}
+                      onClick={() => decline(invitation.id)}
+                    >
+                      Decline
+                    </Button>
+                  </Card.Footer>
+                </Card>
+              )
+            )
           ) : (
             <Card.Empty>
               You haven&apos;t received any invitations to a workspace yet.

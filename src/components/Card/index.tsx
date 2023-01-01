@@ -12,7 +12,7 @@ interface CardInterface extends React.FC<CardProps> {
     title?: string;
   }>;
   Empty: React.FC<{ children: React.ReactNode }>;
-  Footer: React.FC<{ children: React.ReactNode }>;
+  Footer: React.FC<{ children?: React.ReactNode }>;
 }
 
 const Card: CardInterface = ({ children, danger }) => {

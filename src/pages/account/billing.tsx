@@ -14,12 +14,20 @@ import api from '@/lib/common/api';
 import { redirectToCheckout } from '@/lib/client/stripe';
 import { getInvoices, getProducts } from '@/lib/server/stripe';
 import { getPayment } from '@/prisma/services/customer';
+import { GetServerSideProps } from 'next';
+import { Session } from 'next-auth';
+import Stripe from 'stripe';
 
-const Billing = ({ invoices, products }) => {
+type BillingProps = {
+  products: Stripe.Product[];
+  invoices: Stripe.Invoice[];
+};
+
+const Billing: React.FC<BillingProps> = ({ invoices, products }) => {
   const [isSubmitting, setSubmittingState] = useState(false);
   const [showModal, setModalVisibility] = useState(false);
 
-  const subscribe = (priceId) => {
+  const subscribe = (priceId: string) => {
     setSubmittingState(true);
     api(`/api/payments/subscription/${priceId}`, {
       method: 'POST',
@@ -78,9 +86,9 @@ const Billing = ({ invoices, products }) => {
             <p>You are currently under the FREE plan</p>
           </div>
           <div className="flex space-x-5">
-            {products.map((product, index) => (
+            {products.map((product: any, index) => (
               <Card key={index}>
-                <Card.Body title={product.name} subtitle={product.description}>
+                <Card.Body title={product.name} subtitle={product.description!}>
                   <h3 className="text-4xl font-bold">
                     ${Number(product.prices.unit_amount / 100).toFixed(2)}
                   </h3>
@@ -123,7 +131,7 @@ const Billing = ({ invoices, products }) => {
                 <tr key={index} className="text-sm hover:bg-gray-100">
                   <td className="px-3 py-5">
                     <Link
-                      href={invoice.hosted_invoice_url}
+                      href={invoice.hosted_invoice_url!}
                       className="text-blue-600"
                       target="_blank"
                     >
@@ -142,7 +150,7 @@ const Billing = ({ invoices, products }) => {
                   <td className="py-5">{invoice.status}</td>
                   <td className="py-5">
                     <Link
-                      href={invoice.hosted_invoice_url}
+                      href={invoice.hosted_invoice_url!}
                       className="text-blue-600"
                       target="_blank"
                     >
@@ -164,11 +172,11 @@ const Billing = ({ invoices, products }) => {
   );
 };
 
-export const getServerSideProps = async (context) => {
-  const session = await getSession(context);
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  const session = (await getSession(context)) as Session;
   const customerPayment = await getPayment(session.user?.email);
   const [invoices, products] = await Promise.all([
-    getInvoices(customerPayment?.paymentId),
+    getInvoices(customerPayment?.paymentId!),
     getProducts(),
   ]);
   return {
