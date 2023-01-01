@@ -24,7 +24,7 @@ const App = ({ Component, pageProps }: AppProps) => {
 
   useEffect(() => {
     if (process.env.NODE_ENV === 'production') {
-      ReactGA.initialize(String(process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID));
+      ReactGA.initialize(process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID as string);
     }
   }, []);
 

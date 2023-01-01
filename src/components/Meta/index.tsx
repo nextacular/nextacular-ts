@@ -1,7 +1,13 @@
 import { useEffect, useState } from 'react';
 import Head from 'next/head';
 
-const Meta = ({ author, description, keywords, noIndex, title }: MetaType) => {
+const Meta: React.FC<MetaType> = ({
+  author,
+  description,
+  keywords,
+  noIndex,
+  title,
+}) => {
   const [url, setUrl] = useState('');
 
   useEffect(() => {
@@ -45,11 +51,11 @@ Meta.defaultProps = {
 };
 
 export type MetaType = {
-  author: string;
-  description: string;
-  keywords: string;
-  noIndex: Boolean;
-  title: string;
+  author?: string;
+  description?: string;
+  keywords?: string;
+  noIndex?: Boolean;
+  title?: string;
 };
 
 export default Meta;
