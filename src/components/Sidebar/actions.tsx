@@ -1,4 +1,4 @@
-import { Fragment, useState } from 'react';
+import React, { Fragment, useState } from 'react';
 import { Listbox, Transition } from '@headlessui/react';
 import { CheckIcon, PlusIcon, SelectorIcon } from '@heroicons/react/solid';
 import { useRouter } from 'next/router';
@@ -9,6 +9,7 @@ import Modal from '@/components/Modal/index';
 import { useWorkspaces } from '@/hooks/data/index';
 import api from '@/lib/common/api';
 import { useWorkspace } from '@/providers/workspace';
+import { Workspace } from '@prisma/client';
 
 const Actions = () => {
   const { data, isLoading } = useWorkspaces();
@@ -19,7 +20,7 @@ const Actions = () => {
   const [showModal, setModalState] = useState(false);
   const validName = name.length > 0 && name.length <= 16;
 
-  const createWorkspace = (event) => {
+  const createWorkspace = (event: React.MouseEvent<HTMLElement>) => {
     event.preventDefault();
     setSubmittingState(true);
     api('/api/workspace', {
@@ -40,9 +41,10 @@ const Actions = () => {
     });
   };
 
-  const handleNameChange = (event) => setName(event.target.value);
+  const handleNameChange = (event: React.ChangeEvent<HTMLInputElement>) =>
+    setName(event.target.value);
 
-  const handleWorkspaceChange = (workspace) => {
+  const handleWorkspaceChange = (workspace: Workspace) => {
     setWorkspace(workspace);
     router.replace(`/account/${workspace?.slug}`);
   };
@@ -115,7 +117,7 @@ const Actions = () => {
               leaveTo="opacity-0"
             >
               <Listbox.Options className="absolute w-full py-1 mt-1 overflow-auto text-base bg-white rounded-md shadow-lg max-h-60">
-                {data?.workspaces.map((workspace, index) => (
+                {data?.workspaces.map((workspace: Workspace, index: number) => (
                   <Listbox.Option
                     key={index}
                     className={({ active }) =>

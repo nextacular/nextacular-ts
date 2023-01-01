@@ -1,4 +1,17 @@
-const Content = ({ children }) => {
+import * as React from 'react';
+
+interface ContentProps {
+  children: React.ReactNode;
+}
+
+interface ContentInterface extends React.FC<ContentProps> {
+  Container: React.FC<{ children: React.ReactNode }>;
+  Divider: React.FC<{ thick: boolean }>;
+  Empty: React.FC<{ children: React.ReactNode }>;
+  Title: React.FC<{ subtitle: string; title: string }>;
+}
+
+const Content: ContentInterface = ({ children }) => {
   return (
     <div className="flex flex-col h-full p-5 space-y-5 overflow-y-auto md:p-10 md:w-3/4">
       {children}
@@ -6,11 +19,11 @@ const Content = ({ children }) => {
   );
 };
 
-Content.Container = ({ children }) => {
+Content.Container = ({ children }: { children: React.ReactNode }) => {
   return <div className="flex flex-col pb-10 space-y-5">{children}</div>;
 };
 
-Content.Divider = ({ thick }) => {
+Content.Divider = ({ thick }: { thick: boolean }) => {
   return thick ? (
     <hr className="border-2 dark:border-gray-600" />
   ) : (
@@ -18,7 +31,7 @@ Content.Divider = ({ thick }) => {
   );
 };
 
-Content.Empty = ({ children }) => {
+Content.Empty = ({ children }: { children: React.ReactNode }) => {
   return (
     <div>
       <div className="flex items-center justify-center p-5 bg-gray-100 border-4 border-dashed rounded">
@@ -28,7 +41,7 @@ Content.Empty = ({ children }) => {
   );
 };
 
-Content.Title = ({ subtitle, title }) => {
+Content.Title = ({ subtitle, title }: { subtitle: string; title: string }) => {
   return (
     <div>
       <h1 className="text-3xl font-bold md:text-4xl">{title}</h1>

@@ -11,8 +11,9 @@ import swrConfig from '@/config/swr/index';
 import WorkspaceProvider from '@/providers/workspace';
 
 import '@/styles/globals.css';
+import { AppProps } from 'next/app';
 
-const App = ({ Component, pageProps }) => {
+const App = ({ Component, pageProps }: AppProps) => {
   const [progress, setProgress] = useState(false);
   const router = useRouter();
   const swrOptions = swrConfig();
@@ -23,12 +24,12 @@ const App = ({ Component, pageProps }) => {
 
   useEffect(() => {
     if (process.env.NODE_ENV === 'production') {
-      ReactGA.initialize(process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID);
+      ReactGA.initialize(String(process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID));
     }
   }, []);
 
   useEffect(() => {
-    const handleRouteChange = (url) => {
+    const handleRouteChange = (url: string) => {
       ReactGA.pageview(url);
     };
 
@@ -44,7 +45,7 @@ const App = ({ Component, pageProps }) => {
       <SWRConfig value={swrOptions}>
         <ThemeProvider attribute="class">
           <WorkspaceProvider>
-            {progress && <TopBarProgress />}
+            <>{progress && <TopBarProgress />}</>
             <Component {...pageProps} />
           </WorkspaceProvider>
         </ThemeProvider>

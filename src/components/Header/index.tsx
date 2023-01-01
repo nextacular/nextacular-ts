@@ -25,7 +25,7 @@ const Header = () => {
     }
   };
 
-  const toggleTheme = (event) => {
+  const toggleTheme = (event: React.MouseEvent<HTMLElement>) => {
     event.preventDefault();
     setTheme(theme === 'dark' ? 'light' : 'dark');
   };

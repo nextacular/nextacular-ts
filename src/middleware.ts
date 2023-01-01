@@ -1,11 +1,13 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 
-const middleware = (req) => {
-  const { host } = new URL(process.env.APP_URL);
+const APP_URL = String(process.env.APP_URL);
+
+const middleware = (req: NextRequest) => {
+  const { host } = new URL(APP_URL);
   const url = req.nextUrl.clone();
   const { pathname } = req.nextUrl;
   const hostname = req.headers.get('host');
-  const currentHost = hostname.replace(`.${host}`, '');
+  const currentHost = hostname?.replace(`.${host}`, '');
   if (pathname.startsWith(`/_sites`)) {
     return new Response(null, { status: 404 });
   }

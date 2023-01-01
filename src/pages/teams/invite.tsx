@@ -8,8 +8,10 @@ import Card from '@/components/Card/index';
 import Button from '@/components/Button';
 import api from '@/lib/common/api';
 import { getInvitation } from '@/prisma/services/workspace';
+import { GetServerSideProps } from 'next';
+import { Workspace } from '@prisma/client';
 
-const Invite = ({ workspace }) => {
+const Invite = ({ workspace }: { workspace: Workspace }) => {
   const { data } = useSession();
   const router = useRouter();
   const [isSubmitting, setSubmittingState] = useState(false);
@@ -73,8 +75,8 @@ const Invite = ({ workspace }) => {
   );
 };
 
-export const getServerSideProps = async (context) => {
-  const { code } = context.query;
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  const { code }: any = context.query;
   const workspace = await getInvitation(code);
   return { props: { workspace } };
 };

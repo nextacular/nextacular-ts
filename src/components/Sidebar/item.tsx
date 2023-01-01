@@ -1,6 +1,15 @@
+import React from 'react';
 import Link from 'next/link';
 
-const Item = ({ data, isLoading }) => {
+type Props = {
+  data: {
+    name: string;
+    path: string;
+  };
+  isLoading: boolean;
+};
+
+const Item: React.FC<Props> = ({ data, isLoading }) => {
   return isLoading ? (
     <div className="h-6 mb-3 bg-gray-600 rounded animate-pulse" />
   ) : (
@@ -13,7 +22,10 @@ const Item = ({ data, isLoading }) => {
 };
 
 Item.defaultProps = {
-  data: null,
+  data: {
+    name: '',
+    path: '',
+  },
   isLoading: false,
 };
 

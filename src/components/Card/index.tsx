@@ -1,4 +1,21 @@
-const Card = ({ children, danger }) => {
+import * as React from 'react';
+
+interface CardProps {
+  children: React.ReactNode;
+  danger?: boolean;
+}
+
+interface CardInterface extends React.FC<CardProps> {
+  Body: React.FC<{
+    children?: React.ReactNode;
+    subtitle?: string;
+    title?: string;
+  }>;
+  Empty: React.FC<{ children: React.ReactNode }>;
+  Footer: React.FC<{ children: React.ReactNode }>;
+}
+
+const Card: CardInterface = ({ children, danger }) => {
   return danger ? (
     <div className="flex flex-col justify-between border-2 border-red-600 rounded">
       {children}

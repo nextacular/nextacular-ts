@@ -7,12 +7,35 @@ import Button from '@/components/Button/index';
 import Card from '@/components/Card/index';
 import { useDomain } from '@/hooks/data';
 
-const DomainCard = ({ apex, cname, domain, isLoading, refresh, remove }) => {
+type DomainType = {
+  name: string;
+  subdomain: string;
+  value: string;
+  verified: boolean;
+};
+
+interface DomainCard {
+  apex: string;
+  cname: string;
+  domain: DomainType;
+  isLoading: boolean;
+  refresh: CallableFunction;
+  remove: CallableFunction;
+}
+
+const DomainCard: React.FC<DomainCard> = ({
+  apex,
+  cname,
+  domain,
+  isLoading,
+  refresh,
+  remove,
+}) => {
   const { name, subdomain, value, verified } = domain || {};
   const { data, isLoading: isChecking } = useDomain(name);
   const [display, setDisplay] = useState(verified ? 'cname' : 'txt');
 
-  const handleRefresh = (name, isVerified) => {
+  const handleRefresh = (name: string, isVerified: boolean) => {
     const verified = refresh(name, isVerified);
 
     if (verified) {
@@ -184,10 +207,8 @@ DomainCard.defaultProps = {
   apex: '',
   cname: '',
   isLoading: true,
-  name: '',
   refresh: () => {},
   remove: () => {},
-  slug: '',
 };
 
 export default DomainCard;

@@ -10,7 +10,17 @@ import { MenuIcon } from '@heroicons/react/outline';
 
 const staticMenu = sidebarMenu();
 
-const Sidebar = ({ menu }) => {
+type Props = {
+  menu: {
+    name: string;
+    menuItems: {
+      name: string;
+      path: string;
+    }[];
+  }[];
+};
+
+const Sidebar: React.FC<Props> = ({ menu }) => {
   const [showMenu, setMenuVisibility] = useState(false);
   const { data, isLoading } = useWorkspaces();
   const { workspace } = useWorkspace();
